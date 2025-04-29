@@ -1,0 +1,756 @@
+{
+  "name": "Telegram Message Recap",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        40,
+        260
+      ],
+      "id": "f9af3b7f-619a-4c21-9e68-85956200584d",
+      "name": "Telegram Trigger",
+      "webhookId": "4da3782b-14f1-4998-bedb-0a5e7d6f791a",
+      "credentials": {
+        "telegramApi": {
+          "id": "EsBBP0nrVfYajkX6",
+          "name": "wilson_at_van_tay_bot (recap)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "telegram_chat_logs",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "from",
+              "fieldValue": "={{ $json.message.from.first_name }} ({{ $json.message.from.username }})"
+            },
+            {
+              "fieldId": "message",
+              "fieldValue": "={{ $json.message.text }}"
+            },
+            {
+              "fieldId": "group",
+              "fieldValue": "={{ $json.message.chat.title }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        600,
+        240
+      ],
+      "id": "b18d015d-61a3-4f23-82d3-9335b5985b65",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "BcVovapg4XmLVTGQ",
+          "name": "Supabase - bnqtoan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 19 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        -240
+      ],
+      "id": "024f503e-0a3b-4437-a05f-ff3fa4778f03",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "telegram_chat_logs",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "created_at",
+              "condition": "gte",
+              "keyValue": "={{new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()}}"
+            },
+            {
+              "keyName": "group",
+              "condition": "is",
+              "keyValue": "null"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        620,
+        -240
+      ],
+      "id": "768c6e33-7bf9-4f41-a781-def3b0e94e4f",
+      "name": "Supabase1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "BcVovapg4XmLVTGQ",
+          "name": "Supabase - bnqtoan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "include": "allFieldsExcept",
+        "fieldsToExclude": "id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -240
+      ],
+      "id": "8edcafec-a8ad-49b3-a1ae-90da7db215fc",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c274b826-342a-4120-a139-123b1ca0994c",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "array",
+                "operation": "lengthGt",
+                "rightType": "number"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1060,
+        -240
+      ],
+      "id": "9e2c47fb-698f-4faf-b1c5-69ec59318d1d",
+      "name": "If enough message"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-pro-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        -140
+      ],
+      "id": "3709dfdb-7cf6-4633-8142-a6a92097ee42",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PSyFlW6JCEZtztVt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a3f8c234-da29-4d43-9965-9ed612c514cf",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "No meaningful ",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1640,
+        -360
+      ],
+      "id": "e92b3056-5eca-480e-b63d-a7af8ba1ab59",
+      "name": "If No meaningful"
+    },
+    {
+      "parameters": {
+        "chatId": "581129983",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2420,
+        -340
+      ],
+      "id": "117dbbf1-b395-4487-8415-c248da91e453",
+      "name": "Telegram",
+      "webhookId": "87862081-2b15-4ff6-ac13-76f44dcb9eab",
+      "alwaysOutputData": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "EsBBP0nrVfYajkX6",
+          "name": "wilson_at_van_tay_bot (recap)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Recap",
+        "height": 560,
+        "width": 2800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -140,
+        -460
+      ],
+      "typeVersion": 1,
+      "id": "e3ad0b52-bf6b-4734-a176-a850443025af",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Receive",
+        "height": 300,
+        "width": 1140,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        160
+      ],
+      "id": "d24bd925-bacb-44a7-8aed-40fa7ca64ecf",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b8c8fefa-2edf-45d6-bda5-f8d70a50e73e",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        260,
+        260
+      ],
+      "id": "711a7ecb-206f-4d83-8baf-61e3603228f8",
+      "name": "Has message"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -420
+      ],
+      "id": "3c5b239c-5d6a-4dc8-8c62-bc4999cd3e00",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Just send me any text, I will just ignore the message but send you some recap.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -40,
+        -60
+      ],
+      "id": "f68d4241-ebf3-420d-8c88-c5d8a1d5d0fd",
+      "name": "When chat message received",
+      "webhookId": "dafdbad2-5af0-419b-b2b5-a8c5d314363f"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2c54fc0b-daa3-4bac-913d-94254afe2918",
+              "leftValue": "={{ $json.chatInput }}",
+              "rightValue": "hey",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        260,
+        -60
+      ],
+      "id": "a62cd976-716c-4e9c-a901-be53c37995b7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "https://dummyjson.com/quotes/random",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        -40
+      ],
+      "id": "be692f58-ccdf-419e-8b81-ad056d9d8103",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.text = item.json.quote + \" - \"+item.json.author ;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        740,
+        -40
+      ],
+      "id": "ffe5aaa8-769f-41ca-be84-18badac70729",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b6e3c56a-31af-41a4-b438-ea3dc846bb8e",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        -40
+      ],
+      "id": "5655b70f-e9bc-4c2f-bf02-809cf56d346e",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "function splitTextForTelegram(text, maxLength = 4096) {\n  const result = [];\n  \n  // If text is short enough, return as is\n  if (text.length <= maxLength) {\n    return [{ message: text, index: 0 }];\n  }\n  \n  let startIndex = 0;\n  let index = 0;\n  let inTag = false;\n  let buffer = '';\n  \n  for (let i = 0; i < text.length; i++) {\n    // Track if we're inside an HTML tag\n    if (text[i] === '<' && !inTag) {\n      inTag = true;\n    } else if (text[i] === '>' && inTag) {\n      inTag = false;\n    }\n    \n    buffer += text[i];\n    \n    // Check if we've reached maxLength or end of text\n    if (buffer.length >= maxLength || i === text.length - 1) {\n      // If we're in a tag, keep going until we close it\n      if (inTag && i < text.length - 1) {\n        continue;\n      }\n      \n      // Find a safe breaking point if we're not at the end\n      if (i < text.length - 1) {\n        let safeCut = buffer.length;\n        const lastSpace = buffer.lastIndexOf(' ');\n        const lastNewline = buffer.lastIndexOf('\\n');\n        const lastTagClose = buffer.lastIndexOf('>');\n        \n        // Prefer breaking at space or newline, but not inside tags\n        if (lastSpace > lastTagClose) {\n          safeCut = lastSpace + 1;\n        } else if (lastNewline > lastTagClose) {\n          safeCut = lastNewline + 1;\n        } else if (lastTagClose > 0) {\n          safeCut = lastTagClose + 1;\n        }\n        \n        // Adjust the buffer and text position\n        const chunk = buffer.substring(0, safeCut).trim();\n        result.push({\n          message: chunk,\n          index: index++\n        });\n        \n        // Move startIndex to after this chunk\n        startIndex += safeCut;\n        i = startIndex - 1; // -1 because the loop will increment\n        buffer = '';\n      } else {\n        // If we're at the end, push whatever's left\n        result.push({\n          message: buffer.trim(),\n          index: index++\n        });\n        buffer = '';\n      }\n    }\n  }\n  \n  return result;\n}\n\n// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.chunks = splitTextForTelegram(item.json.text);\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        -340
+      ],
+      "id": "57c96b72-079e-4c81-8a69-0bd819d89578",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "chunks",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        -340
+      ],
+      "id": "280b6760-0d6c-4c0e-8c24-31054e107997",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa276313-3461-43f1-b175-26dbb196423f",
+              "name": "text",
+              "value": "={{ $json.result.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2480,
+        -140
+      ],
+      "id": "89ebb95d-4e6f-4c23-a802-59f62237a401",
+      "name": "Output"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tóm tắt chat log này trong tiếng Việt, chia theo nhóm. Có phần tổng quan bên trên và khoảng thời gian (GMT+7).\n\nĐảm bảo cấu trúc sau:\n\nA. Cho từng nhóm\n\n- Tóm tắt cho nhóm\n- Đưa ra nhận định, đánh giá rủi ro.\n- Các quyết định, deadline, task nào được đưa ra (viết rõ thành 1 mục cho từng dự án)?\n- Các URL\n\nB. Nhìn chung\n\n3. Cho biết nhóm đang vui nhất (theo văn phong)\n4. Nhóm có nhiều vấn đề nhất (rủi ro, tranh cãi, không thể quyết định)\n5. Nhóm có nhịp độ thảo luận dày đặc nhất\n\nC. Định dạng:\n\n- Trả về dạng html (chỉ được dùng thẻ b, i; không được dùng bất kỳ thẻ nào khác), không dùng markdown; mục đích để gửi qua telegram api với html parse mode.\n- Trình bày dễ đọc sử dụng gạch đầu dòng; dùng dấu - (cho bullet cấp 1), dùng dấu + (cho bullet cấp 2) thay cho *, chỉ dùng icon ở các mục lớn.\n- Sử dụng icon có màu xanh lá ở đầu các tên group, với group có nhiều vấn đề, chọn icon màu vàng, với các group có vẻ tranh luận nhiều hoặc có rủi ro cao, chọn icon màu đỏ.\n\nChat log:\n \n{{ JSON.stringify($json.data) }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a Telegram group assistant. Here are messages from the group over the last 12 hours. Only summarize if meaningful discussion took place — like questions, planning, or decisions.\n\nIf the content is mostly greetings, jokes, or unrelated small talk, respond with:\n\"No meaningful content to summarize.\""
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        1280,
+        -360
+      ],
+      "id": "b5933962-e6aa-4441-8920-363daa8eb341",
+      "name": "AI recap"
+    },
+    {
+      "parameters": {
+        "content": "Tham gia Discord hỗ trợ của chúng tôi tại: https://discord.gg/CbEbkYQb",
+        "height": 80,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        760,
+        -600
+      ],
+      "id": "dd48557f-d1c1-4615-a00b-7403d4100034",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 167471498,
+          "message": {
+            "message_id": 8,
+            "from": {
+              "id": 659464486,
+              "is_bot": false,
+              "first_name": "Vy",
+              "last_name": "Nguyen 🍃",
+              "username": "vynguyen_olala"
+            },
+            "chat": {
+              "id": -4581856111,
+              "title": "GH_GP Invest",
+              "type": "group",
+              "all_members_are_administrators": true
+            },
+            "date": 1743735558,
+            "text": "Tuyen Le done cái file feedback rồi nha",
+            "entities": [
+              {
+                "offset": 0,
+                "length": 8,
+                "type": "text_mention",
+                "user": {
+                  "id": 1280361053,
+                  "is_bot": false,
+                  "first_name": "Tuyen Le"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Has message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "If enough message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If enough message": {
+      "main": [
+        [
+          {
+            "node": "AI recap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI recap",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If No meaningful": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has message": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI recap": {
+      "main": [
+        [
+          {
+            "node": "If No meaningful",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "431e7b90-f4de-47da-8d66-11736fb1b842",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a78fe390c93c58de4f8784bcf277bccc0fa9d453758179fbe10ff427029bc8c4"
+  },
+  "id": "bsqagw2PGd3cEKQY",
+  "tags": []
+}
