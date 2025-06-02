@@ -1,0 +1,207 @@
+{
+  "name": "Amy Bank",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Cần chuyển tiền cho ai nà? Mình sẽ giúp bạn tạo mã QR chuyển tiền",
+        "options": {
+          "allowFileUploads": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        160
+      ],
+      "id": "4a3bd033-5223-4fe1-bb8e-f7ad5dd09d4b",
+      "name": "When chat message received",
+      "webhookId": "704a7c14-28ee-41ec-8715-1bf48d120101"
+    },
+    {
+      "parameters": {
+        "text": "=Bạn là một trợ lý chuyên đọc và trích xuất thông tin yêu cầu chuyển khoản; đây là nội dung\n\nNếu không có thông tin nào thì cứ để trống, đừng đoán hay suy luận\n\n{{ $json.chatInput }}\n\nDanh sách ngân hàng (JSON)\n\n[\n    {\"Vietcombank\": \"Vietcombank - Ngân hàng TMCP Ngoại Thương Việt Nam\"},\n    {\"VietinBank\": \"VietinBank - Ngân hàng TMCP Công thương Việt Nam\"},\n    {\"MBBank\": \"MBBank - Ngân hàng TMCP Quân đội\"},\n    {\"ACB\": \"ACB - Ngân hàng TMCP Á Châu\"},\n    {\"VPBank\": \"VPBank - Ngân hàng TMCP Việt Nam Thịnh Vượng\"},\n    {\"TPBank\": \"TPBank - Ngân hàng TMCP Tiên Phong\"},\n    {\"MSB\": \"MSB - Ngân hàng TMCP Hàng Hải\"},\n    {\"NamABank\": \"NamABank - Ngân hàng TMCP Nam Á\"},\n    {\"LienVietPostBank\": \"LienVietPostBank - Ngân hàng TMCP Bưu Điện Liên Việt\"},\n    {\"VietCapitalBank\": \"VietCapitalBank - Ngân hàng TMCP Bản Việt\"},\n    {\"BIDV\": \"BIDV - Ngân hàng TMCP Đầu tư và Phát triển Việt Nam\"},\n    {\"Sacombank\": \"Sacombank - Ngân hàng TMCP Sài Gòn Thương Tín\"},\n    {\"VIB\": \"VIB - Ngân hàng TMCP Quốc tế Việt Nam\"},\n    {\"HDBank\": \"HDBank - Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh\"},\n    {\"SeABank\": \"SeABank - Ngân hàng TMCP Đông Nam Á\"},\n    {\"GPBank\": \"GPBank - Ngân hàng Thương mại TNHH MTV Dầu Khí Toàn Cầu\"},\n    {\"PVcomBank\": \"PVcomBank - Ngân hàng TMCP Đại Chúng Việt Nam\"},\n    {\"NCB\": \"NCB - Ngân hàng TMCP Quốc Dân\"},\n    {\"ShinhanBank\": \"ShinhanBank - Ngân hàng TNHH MTV Shinhan Việt Nam\"},\n    {\"SCB\": \"SCB - Ngân hàng TMCP Sài Gòn\"},\n    {\"PGBank\": \"PGBank - Ngân hàng TMCP Xăng dầu Petrolimex\"},\n    {\"Agribank\": \"Agribank - Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam\"},\n    {\"Techcombank\": \"Techcombank - Ngân hàng TMCP Kỹ thương Việt Nam\"},\n    {\"SaigonBank\": \"SaigonBank - Ngân hàng TMCP Sài Gòn Công Thương\"},\n    {\"DongABank\": \"DongABank - Ngân hàng TMCP Đông Á\"},\n    {\"BacABank\": \"BacABank - Ngân hàng TMCP Bắc Á\"},\n    {\"StandardChartered\": \"StandardChartered - Ngân hàng TNHH MTV Standard Chartered Bank Việt Nam\"},\n    {\"Oceanbank\": \"Oceanbank - Ngân hàng Thương mại TNHH MTV Đại Dương\"},\n    {\"VRB\": \"VRB - Ngân hàng Liên doanh Việt - Nga\"},\n    {\"ABBANK\": \"ABBANK - Ngân hàng TMCP An Bình\"},\n    {\"VietABank\": \"VietABank - Ngân hàng TMCP Việt Á\"},\n    {\"Eximbank\": \"Eximbank - Ngân hàng TMCP Xuất Nhập khẩu Việt Nam\"},\n    {\"VietBank\": \"VietBank - Ngân hàng TMCP Việt Nam Thương Tín\"},\n    {\"IndovinaBank\": \"IndovinaBank - Ngân hàng TNHH Indovina\"},\n    {\"BaoVietBank\": \"BaoVietBank - Ngân hàng TMCP Bảo Việt\"},\n    {\"PublicBank\": \"PublicBank - Ngân hàng TNHH MTV Public Việt Nam\"},\n    {\"SHB\": \"SHB - Ngân hàng TMCP Sài Gòn - Hà Nội\"},\n    {\"CBBank\": \"CBBank - Ngân hàng Thương mại TNHH MTV Xây dựng Việt Nam\"},\n    {\"OCB\": \"OCB - Ngân hàng TMCP Phương Đông\"},\n    {\"KienLongBank\": \"KienLongBank - Ngân hàng TMCP Kiên Long\"},\n    {\"CIMB\": \"CIMB - Ngân hàng TNHH MTV CIMB Việt Nam\"},\n    {\"HSBC\": \"HSBC - Ngân hàng TNHH MTV HSBC (Việt Nam)\"},\n    {\"DBSBank\": \"DBSBank - DBS Bank Ltd - Chi nhánh Thành phố Hồ Chí Minh\"},\n    {\"Nonghyup\": \"Nonghyup - Ngân hàng Nonghyup - Chi nhánh Hà Nội\"},\n    {\"HongLeong\": \"HongLeong - Ngân hàng TNHH MTV Hong Leong Việt Nam\"},\n    {\"Woori\": \"Woori - Ngân hàng TNHH MTV Woori Việt Nam\"},\n    {\"UnitedOverseas\": \"UnitedOverseas - Ngân hàng United Overseas - Chi nhánh TP. Hồ Chí Minh\"},\n    {\"KookminHN\": \"KookminHN - Ngân hàng Kookmin - Chi nhánh Hà Nội\"},\n    {\"KookminHCM\": \"KookminHCM - Ngân hàng Kookmin - Chi nhánh Thành phố Hồ Chí Minh\"},\n    {\"COOPBANK\": \"COOPBANK - Ngân hàng Hợp tác xã Việt Nam\"}\n]",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "bank_name",
+              "description": "Mã của ngân hàng cần chuyển đến, VD: ACB, VCB,...",
+              "required": true
+            },
+            {
+              "name": "account",
+              "description": "Số tài khoản",
+              "required": true
+            },
+            {
+              "name": "content",
+              "description": "Nội dung cần chuyển khoản. Tối đa 50 ký tự: sau khi đọc nội dung chuyển khoản gốc, nếu nó dài hơn 50 ký tự, hãy thử viết tắt (trong khi cố giữ nguyên ý nghĩa) các từ như Công ty -> Cty, thanh toán -> TT, hóa đơn -> HD, Dịch vụ -> DV,..."
+            },
+            {
+              "name": "amount",
+              "description": "Số tiền cần chuyển, loại bỏ toàn bộ dấu chấm (dots), phẩy (commas)"
+            },
+            {
+              "name": "amount_formatted",
+              "description": "Số tiền chuyển khoản, viết dạng số và có định dạng VND"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        200,
+        160
+      ],
+      "id": "e3786378-cc88-4b12-99ed-91a997e6fd81",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        200,
+        380
+      ],
+      "id": "0634b1eb-f324-437f-b962-934daa11273e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YDPtCJ3C3YCiBjdQ",
+          "name": "gemini_bnqtoan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const toBankContent = (text) => {\n  // Return empty string if text is undefined or null\n  if (!text || typeof text !== 'string') {\n    return '';\n  }\n\n  let normalizedText = text;\n  \n  // Check if normalize is supported\n  if (typeof String.prototype.normalize === 'function') {\n    normalizedText = text.normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\");\n  } else {\n    // Fallback: Basic replacement for common Vietnamese characters\n    const vietnameseMap = {\n      'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',\n      'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',\n      'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',\n      'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',\n      'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',\n      'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',\n      'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',\n      'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',\n      'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',\n      'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',\n      'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',\n      'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',\n      'À': 'A', 'Á': 'A', 'Ả': 'A', 'Ã': 'A', 'Ạ': 'A',\n      'Ă': 'A', 'Ằ': 'A', 'Ắ': 'A', 'Ẳ': 'A', 'Ẵ': 'A', 'Ặ': 'A',\n      'Â': 'A', 'Ầ': 'A', 'Ấ': 'A', 'Ẩ': 'A', 'Ẫ': 'A', 'Ậ': 'A',\n      'È': 'E', 'É': 'E', 'Ẻ': 'E', 'Ẽ': 'E', 'Ẹ': 'E',\n      'Ê': 'E', 'Ề': 'E', 'Ế': 'E', 'Ể': 'E', 'Ễ': 'E', 'Ệ': 'E',\n      'Ì': 'I', 'Í': 'I', 'Ỉ': 'I', 'Ĩ': 'I', 'Ị': 'I',\n      'Ò': 'O', 'Ó': 'O', 'Ỏ': 'O', 'Õ': 'O', 'Ọ': 'O',\n      'Ô': 'O', 'Ồ': 'O', 'Ố': 'O', 'Ổ': 'O', 'Ỗ': 'O', 'Ộ': 'O',\n      'Ơ': 'O', 'Ờ': 'O', 'Ớ': 'O', 'Ở': 'O', 'Ỡ': 'O', 'Ợ': 'O',\n      'Ù': 'U', 'Ú': 'U', 'Ủ': 'U', 'Ũ': 'U', 'Ụ': 'U',\n      'Ư': 'U', 'Ừ': 'U', 'Ứ': 'U', 'Ử': 'U', 'Ữ': 'U', 'Ự': 'U',\n      'Ỳ': 'Y', 'Ý': 'Y', 'Ỷ': 'Y', 'Ỹ': 'Y', 'Ỵ': 'Y',\n      'Đ': 'D', 'đ': 'd'\n    };\n    \n    normalizedText = text.replace(/[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐđ]/g, \n      match => vietnameseMap[match] || match);\n  }\n  \n  // Replace Đ/đ and remove special characters\n  return normalizedText\n    .replace(/Đ/g, \"D\")\n    .replace(/đ/g, \"d\")\n    .replace(/[^a-zA-Z0-9 ]/g, \"\");\n};\n\n// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.output.content = toBankContent(item.json.output.content);\n  \n  item.json.output.qrUrl = encodeURI(`https://qr.sepay.vn/img?bank=${item.json.output.bank_name}&acc=${item.json.output.account}&template=qronly&amount=${item.json.output.amount}&des=${item.json.output.content}`)\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        160
+      ],
+      "id": "0e9fd825-5baa-455e-8bef-6e782f08a104",
+      "name": "Transform bank transfer content"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ab7435a9-3aec-4d9c-906a-e3ca33dde7de",
+              "name": "text",
+              "value": "=Hey, quét mã này nha:\n\n![Generated Image]({{ $json.output.qrUrl }})\n\n- Chuyển đến: {{ $json.output.bank_name }} - {{ $json.output.account }}\n- Nội dung: {{ $json.output.content }}\n- Số tiền: {{ $json.output.amount_formatted }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        160
+      ],
+      "id": "72244e95-3b7e-4300-8e2d-515a7df5b213",
+      "name": "Generate response"
+    },
+    {
+      "parameters": {
+        "content": "### Gửi thông tin, nhận QR chuyển khoản\n\nChuyển khoản nhiều nhưng không có sẵn QR mà chỉ có 1 số text hỗn độn? Gửi vào đây, bot sẽ tạo QR chuyển khoản cho bạn.\n\nChia sẻ đến bạn từ https://arealisticdreamer.com/toi-uu-quy-trinh-van-hanh-hieu-suat-ca-nhan-bang-tu-dong-hoa-thong-minh/",
+        "width": 660,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        -60
+      ],
+      "typeVersion": 1,
+      "id": "f607c18d-0c23-4e9c-9efc-b756ec3fd950",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "When chat message received": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Transform bank transfer content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform bank transfer content": {
+      "main": [
+        [
+          {
+            "node": "Generate response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a1590fb5-08c7-4a68-a2e8-7acaa5c32eea",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "96a1a1b7764e74f37553db0868e624069e742f18413ee228c15fec562dbc780e"
+  },
+  "id": "8VgX2ApJPMySHLkC",
+  "tags": []
+}
