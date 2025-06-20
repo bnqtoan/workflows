@@ -1,0 +1,295 @@
+{
+  "name": "Perplexity",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        40,
+        480
+      ],
+      "id": "0c462f91-1cc1-4668-9f32-571d8225e4fb",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e6099829-e804-4ecb-a9e2-7c731c663119",
+              "name": "keyword",
+              "value": "khóa học AI automation với n8n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        480
+      ],
+      "id": "26794982-b5a0-49b4-bb02-f0d35910497f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar\",\n  \"messages\": [\n    {\n          \"role\": \"system\",\n          \"content\": \"Bạn là một Chuyên gia SEO và Nghiên cứu, thành thạo trong việc phân tích ý định tìm kiếm, nghiên cứu cạnh tranh, và tạo nội dung chuẩn SEO. Bạn tuân thủ nghiêm ngặt các tiêu chuẩn từ tài liệu chính thức như 'Google Search Quality Evaluator Guidelines' (tập trung vào E-E-A-T: Experience, Expertise, Authoritativeness, Trustworthiness) và 'Google Helpful Content Guidelines' (ưu tiên nội dung hữu ích, độc đáo, và đáp ứng nhu cầu người dùng).\"\n        },\n          {\n          \"role\": \"user\",\n          \"content\": \"Thực hiện các bước sau cho từ khóa '{{ $json.keyword }}', nhưng chỉ trả về prompt tối ưu cuối cùng:\\n\\n1. **Phân tích ý định tìm kiếm**: Xác định ý định chính của người dùng (thông tin, giao dịch, điều hướng, hoặc thương mại), các nhu cầu cụ thể, và long-tail keywords liên quan.\\n2. **Nghiên cứu cạnh tranh**: Tìm 5 bài viết hàng đầu trên Google từ nguồn uy tín (tránh video, quảng cáo). Phân tích tiêu đề, mô tả meta, độ dài bài viết, keyword gap (từ khóa đối thủ sử dụng mà ta có thể nhắm đến), backlink profile, và cách đáp ứng ý định tìm kiếm.\\n3. **Phân tích outline và từ khóa**: Xác định LSI keywords, cấu trúc outline chi tiết (bao gồm tiêu đề, tiểu mục, FAQ, ví dụ thực tế), và các đặc điểm SERP (featured snippets, PAA). Đảm bảo outline có một phần 'Định nghĩa khái niệm' liên quan đến '{{ $json.keyword }}' và điều chỉnh outline phù hợp với ý định tìm kiếm (ví dụ: danh sách sản phẩm cho ý định thương mại).\\n4. **Tìm hình ảnh minh họa**: Tìm 3-5 hình ảnh từ nguồn trực tuyến uy tín (như Unsplash, Pexels, hoặc các trang y tế nếu phù hợp) liên quan đến '{{ $json.keyword }}'. Cung cấp **liên kết trực tiếp đến file hình ảnh** (ví dụ: 'https://images.unsplash.com/photo-1234567890?ixlib=rb-4.0.3'), kèm mô tả ngắn gọn về cách sử dụng (ví dụ: 'Hình ảnh minh họa triệu chứng mẫn ngứa cho tiêu đề H2').\\n5. **Tạo prompt tối ưu**: Dựa trên các phân tích trên, tạo một prompt chi tiết để AI tiếp theo sinh tiêu đề, nội dung, và meta description dưới dạng **JSON** với cấu trúc {title, content, meta_description}. Nội dung là **mã HTML chỉ chứa phần body** (không bao gồm <html>, <head>, hay CSS), phù hợp để dán trực tiếp vào WordPress. Prompt phải:\\n   - Tuân thủ 'Google Search Quality Evaluator Guidelines' (E-E-A-T) và 'Google Helpful Content Guidelines'.\\n   - **Tiêu đề**: Dưới 60 ký tự, chứa từ khóa chính '{{ $json.keyword }}' ở đầu, sử dụng câu hỏi tu từ hoặc số liệu (nếu phù hợp), và thêm yếu tố kích thích CTR (ví dụ: 'Bí quyết', 'Hướng dẫn 2025').\\n   - **Meta description**: 100-160 ký tự, chứa từ khóa chính, tóm tắt nội dung, và yếu tố thu hút CTR (ví dụ: 'Khám phá ngay!').\\n   - **Nội dung**: 1500-2000 từ, sử dụng từ khóa chính '{{ $json.keyword }}' và LSI keywords với mật độ 1-2%, có ít nhất 6 phần chính: Giới thiệu, Định nghĩa khái niệm, 3 phần nội dung chính, Kết luận.\\n   - Quy định văn phong: chuyên nghiệp, thân thiện, dễ tiếp cận; câu chủ động, đoạn văn ngắn (3-5 câu), sử dụng câu hỏi tu từ và ví dụ thực tế.\\n   - Bao gồm FAQ dựa trên PAA, 2-3 liên kết nội bộ (dùng thẻ <a href> với anchor text chứa từ khóa liên quan), số liệu minh họa, và lời kêu gọi hành động (ví dụ: 'Bạn có kinh nghiệm gì với {{ $json.keyword }}? Chia sẻ ngay!').\\n   - Tích hợp 3-5 hình ảnh với thẻ <img src=\\\"[URL]\\\" alt=\\\"[Mô tả alt text chứa từ khóa]\\\"> tại các vị trí cụ thể (ví dụ: dưới tiêu đề H2). Nhấn mạnh rằng hình ảnh phải được chèn để tăng SEO và trải nghiệm người dùng.\\n   - Yêu cầu mã HTML sử dụng thẻ <h1>, <h2>, <h3>, <p>, <ul>, <li> cho cấu trúc rõ ràng, hợp lệ, và tương thích với WordPress.\\n\\n**Định dạng đầu ra**:\\n```\\n[Prompt tối ưu để sinh JSON chứa title, content (HTML body), và meta_description, bao gồm thẻ <img> với liên kết trực tiếp]\\n```\\n\\n**Ngôn ngữ**: Tiếng Việt\\n**Lưu ý**: Không sử dụng AI để tạo hình ảnh; chỉ tìm và cung cấp liên kết trực tiếp đến file hình ảnh từ các nguồn uy tín như Unsplash hoặc Pexels.\"\n        }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        540,
+        480
+      ],
+      "id": "58e2c562-6c98-463b-84fc-18e7a5d063f8",
+      "name": "Outline",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "m5qgYTKboBSxmwjF",
+          "name": "ARD Perplexity"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.choices[0].message.content }}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        820,
+        480
+      ],
+      "id": "b64ffeb7-b417-4157-be0f-21f70cb1e001",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        840,
+        760
+      ],
+      "id": "3139f49b-bcce-476a-b7f2-878d6e51ba3c",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "SCApSZCw9oGnCp2S",
+          "name": "ARD 2 Openrouter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "title": "={{ $json.output.title }}",
+        "additionalFields": {
+          "content": "={{ $json.output.content }}",
+          "status": "publish"
+        }
+      },
+      "type": "n8n-nodes-base.wordpress",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        480
+      ],
+      "id": "e3ef1ecd-90c9-44a4-afb3-bc98d5975e87",
+      "name": "Wordpress",
+      "credentials": {
+        "wordpressApi": {
+          "id": "xtcTZGVuppqrpDYL",
+          "name": "ARD 5 Test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"title\": \"California\",\n\t\"content\": \"Post content\",\n    \"meta_description\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1000,
+        700
+      ],
+      "id": "12fe8608-4129-431d-a41e-71100282aa47",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Test workflow’": [
+      {
+        "json": {
+          "keyword": "khóa học thiết kế AI agent"
+        }
+      }
+    ],
+    "Outline": [
+      {
+        "json": {
+          "id": "670fdf03-0146-40ae-a843-c9fbb36f3a77",
+          "model": "sonar-pro",
+          "created": 1750441898,
+          "usage": {
+            "prompt_tokens": 1157,
+            "completion_tokens": 1195,
+            "total_tokens": 2352,
+            "search_context_size": "low"
+          },
+          "citations": [
+            "https://www.udemy.com/course/automation-co-ban-voi-n8n-hoc-nhanh-lam-ngay-tu-ong-hoa/",
+            "https://www.youtube.com/watch?v=4ectBM4myrM",
+            "https://funix.edu.vn/chia-se-kien-thuc/ai-automation-voi-n8n-co-ban/",
+            "https://khoahocsinhvien.com/khoa-hoc-ai-automation-co-ban/",
+            "https://khoahocre.com/khoa-hoc/khoa-hoc-ai-agent-va-n8n-tu-dong-hoa-cong-viec-bang-ai/"
+          ],
+          "search_results": [
+            {
+              "title": "AI Automation Cơ Bản với N8N– Học Nhanh, Làm Ngay | Udemy",
+              "url": "https://www.udemy.com/course/automation-co-ban-voi-n8n-hoc-nhanh-lam-ngay-tu-ong-hoa/",
+              "date": null
+            },
+            {
+              "title": "Hướng dẫn n8n: Xây dựng AI Agent và AI Automation 2025 - YouTube",
+              "url": "https://www.youtube.com/watch?v=4ectBM4myrM",
+              "date": "2025-03-23"
+            },
+            {
+              "title": "AI Automation với N8N cơ bản - FUNiX",
+              "url": "https://funix.edu.vn/chia-se-kien-thuc/ai-automation-voi-n8n-co-ban/",
+              "date": "2025-04-18"
+            },
+            {
+              "title": "Khoá Học AI Automation Cơ Bản Với N8N– Học Nhanh, Làm Ngay",
+              "url": "https://khoahocsinhvien.com/khoa-hoc-ai-automation-co-ban/",
+              "date": null
+            },
+            {
+              "title": "Khóa Học AI Agent và n8n - Tự Động Hóa Công Việc Bằng AI",
+              "url": "https://khoahocre.com/khoa-hoc/khoa-hoc-ai-agent-va-n8n-tu-dong-hoa-cong-viec-bang-ai/",
+              "date": null
+            }
+          ],
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "finish_reason": "stop",
+              "message": {
+                "role": "assistant",
+                "content": "```\nBạn là AI Copywriter & SEO. Hãy tạo JSON như yêu cầu dưới đây cho từ khóa chính: 'khóa học AI automation với n8n'.\n\nYêu cầu JSON:\n{\n  \"title\": \"[TIÊU ĐỀ DƯỚI 60 KÝ TỰ, chứa từ khóa 'khóa học AI automation với n8n' ở đầu, sử dụng câu hỏi tu từ hoặc số liệu (nếu phù hợp), thêm yếu tố kích thích CTR như 'Bí quyết', 'Hướng dẫn 2025']\",\n  \"content\": \"[Nội dung HTML body 1500-2000 từ, cấu trúc rõ ràng bằng các thẻ <h1>, <h2>, <h3>, <p>, <ul>, <li>. Yêu cầu như sau:\n\n- Mở đầu với <h1> chứa nguyên cụm từ khóa chính.\n- Phần 1: <h2>Giới thiệu</h2> – Tóm tắt xu hướng tự động hóa với AI, lợi ích thực tiễn, bối cảnh sử dụng n8n và vấn đề người dùng gặp phải.\n- Phần 2: <h2>Định nghĩa khái niệm</h2> – Giải thích 'khóa học AI automation với n8n' là gì, đối tượng phù hợp, khác biệt so với các khóa tự động hóa AI khác. Ngay dưới H2 này chèn mã <img src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3' alt='học AI automation với n8n' >.\n- Phần 3: <h2>Lợi ích khi học AI automation với n8n</h2> – Liệt kê lợi ích nổi bật như tiết kiệm thời gian, nâng cao hiệu suất, không cần biết code, ví dụ thực tiễn ứng dụng (minh họa bằng số liệu, case study). Sau đoạn đầu tiên dưới H2 này, chèn <img src='https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg' alt='ứng dụng khóa học AI automation với n8n'>.\n- Phần 4: <h2>Nội dung khóa học AI automation với n8n</h2> – Trình bày tổng quan nội dung các phần học điển hình (theo nghiên cứu từ đối thủ: Giới thiệu n8n, thiết lập workflow, xây dựng automation, tích hợp AI, chatbot, tự động hóa email, đăng bài MXH, quản lý dữ liệu), giải thích lộ trình từ cơ bản đến nâng cao. Chèn <img src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3' alt='quy trình học automation với n8n'> bên dưới mô tả tổng quan lộ trình.\n- Phần 5: <h2>Ai nên tham gia khóa học AI automation với n8n?</h2> – Phân tích nhóm đối tượng phù hợp: marketer, doanh nghiệp nhỏ, freelancer, quản lý dự án, cá nhân muốn tối ưu hóa công việc. Chèn <img src='https://images.pexels.com/photos/1181355/pexels-photo-1181355.jpeg' alt='đối tượng phù hợp với khóa học AI automation với n8n'> ngay dưới tiêu đề H2.\n- Phần 6: <h2>Kết luận & Lời kêu gọi hành động</h2> – Khẳng định lại giá trị khóa học, mời chia sẻ trải nghiệm, đặt câu hỏi: 'Bạn có kinh nghiệm gì với khóa học AI automation với n8n? Chia sẻ ngay!' Khuyến khích click đăng ký/đọc thêm/bình luận.\n- Tích hợp các LSI keywords: n8n là gì, tự động hóa quy trình, AI workflow, khóa học tự động hóa không cần code, học AI dễ hiểu, ứng dụng AI trong công việc, ví dụ thực tế n8n, so sánh n8n và Zapier, tự động hóa email, tạo chatbot AI, tích hợp AI vào workflow.\n- FAQ dựa trên các PAA tiêu biểu: [n8n có khó học không? khóa học phù hợp cho ai? AI automation khác gì so với automation truyền thống? Cần chuẩn bị gì trước khi học?]\n- Liên kết nội bộ <a href='/khoa-hoc-tu-dong-hoa-quy-trinh-doanh-nghiep' >khóa học tự động hóa quy trình doanh nghiệp</a>, <a href='/khoa-hoc-chatbot-ai' >khóa học chatbot AI</a>, <a href='/tai-lieu-n8n' >tài liệu n8n</a> đặt ở các vị trí logic trong nội dung để tăng chuyển đổi.\n- Đảm bảo hình ảnh được chèn đúng vị trí để tăng SEO, trải nghiệm người dùng.\n- Đoạn văn ngắn 3-5 câu, văn phong thân thiện, chuyên nghiệp, dễ tiếp cận, ưu tiên câu chủ động, giải thích ví dụ thực tế.\n]\",\n  \"meta_description\": \"[100-160 ký tự, chứa từ khóa chính, tóm tắt nội dung, thêm yếu tố kích thích CTR như 'Khám phá ngay!']\"\n}\n\nHãy giữ cấu trúc JSON và các quy định đăng bài HTML như trên. Không tự ý thay đổi URL ảnh, chỉ sử dụng đúng các link đã cung cấp cho phần hình minh họa.\n```"
+              },
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Wordpress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "34f48033-51e3-4adf-95f8-305dcddbf7d5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9c670197868e529fc0e68044a8615b0e65e4296010a61c8a31e0d5b19f98213f"
+  },
+  "id": "iZoNY2LiR4tWV1U1",
+  "tags": []
+}
